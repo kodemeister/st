@@ -11,8 +11,10 @@ depends=('libxft' 'libxext' 'xorg-fonts-misc')
 makedepends=('ncurses')
 url="http://st.suckless.org"
 source=(http://dl.suckless.org/st/$pkgname-$pkgver.tar.gz
-        config.h)
+        config.h
+        st-disable-bold-italic-fonts.diff)
 md5sums=('29b2a599cf1511c8062ed8f025c84c63'
+         'SKIP'
          'SKIP')
 
 prepare() {
@@ -20,6 +22,7 @@ prepare() {
   # skip terminfo which conflicts with nsurses
   sed -i '/\@tic /d' Makefile
   cp $srcdir/config.h config.h
+  patch -p1 -i $srcdir/st-disable-bold-italic-fonts.diff
 }
 
 build() {

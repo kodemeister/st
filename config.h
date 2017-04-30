@@ -6,6 +6,12 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static char font[] = "Droid Sans Mono Slashed for Powerline:size=14";
+
+/* disable bold, italic and roman fonts globally */
+static int disablebold = 1;
+static int disableitalic = 1;
+static int disableroman = 1;
+
 static int borderpx = 0;
 
 /*
