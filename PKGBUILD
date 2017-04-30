@@ -12,8 +12,10 @@ makedepends=('ncurses')
 url="http://st.suckless.org"
 source=(http://dl.suckless.org/st/$pkgname-$pkgver.tar.gz
         config.h
-        st-disable-bold-italic-fonts.diff)
+        st-disable-bold-italic-fonts.diff
+        st.desktop)
 md5sums=('29b2a599cf1511c8062ed8f025c84c63'
+         'SKIP'
          'SKIP'
          'SKIP')
 
@@ -35,4 +37,5 @@ package() {
   make PREFIX=/usr DESTDIR="$pkgdir" TERMINFO="$pkgdir/usr/share/terminfo" install
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 README "$pkgdir/usr/share/doc/$pkgname/README"
+  install -Dm644 $srcdir/st.desktop "$pkgdir/usr/share/applications/st.desktop"
 }
