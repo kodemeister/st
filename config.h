@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char font[] = "Fira Mono for Powerline:size=14";
+static char font[] = "FuraMono Nerd Font:size=14";
 
 /* disable bold, italic and roman fonts globally */
 static int disablebold = 0;
