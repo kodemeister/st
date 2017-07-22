@@ -1,44 +1,67 @@
-# Contributor: Patrick Jackson <PatrickSJackson gmail com>
-# Maintainer: Christoph Vigano <mail@cvigano.de>
+# Maintainer: mar77i <mar77i at mar77i dot ch>
+# Past Maintainer: Gaetan Bisson <bisson@archlinux.org>
+# Contributor: Scytrin dai Kinthra <scytrin@gmail.com>
 
-pkgname=st
-pkgver=0.7
+pkgname=st-git
+_pkgname=st
+pkgver=0.7.30.g8dacdfb
 pkgrel=1
-pkgdesc='A simple virtual terminal emulator for X.'
+pkgdesc='Simple virtual terminal emulator for X'
+url='http://st.suckless.org/'
 arch=('i686' 'x86_64')
 license=('MIT')
-depends=('libxft' 'libxext' 'xorg-fonts-misc')
-makedepends=('ncurses')
-url="http://st.suckless.org"
-source=(http://dl.suckless.org/st/$pkgname-$pkgver.tar.gz
-        config.h
-        st-disable-bold-italic-fonts.diff
-        st-fix-missing-glyphs.diff
-        st.desktop)
-md5sums=('29b2a599cf1511c8062ed8f025c84c63'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP')
+options=('zipman')
+depends=('libxft')
+makedepends=('ncurses' 'libxext' 'git')
+epoch=1
+# include config.h and any patches you want to have applied here
+source=('git://git.suckless.org/st' 'config.h' 'st.desktop')
+sha1sums=('SKIP' 'SKIP' 'SKIP')
+
+provides=("${_pkgname}")
+conflicts=("${_pkgname}")
+
+pkgver() {
+	cd "${_pkgname}"
+	git describe --tags |sed 's/-/./g'
+}
 
 prepare() {
-  cd $srcdir/$pkgname-$pkgver
-  # skip terminfo which conflicts with nsurses
-  sed -i '/\@tic /d' Makefile
-  cp $srcdir/config.h config.h
-  patch -p1 -i $srcdir/st-disable-bold-italic-fonts.diff
-  patch -p1 -i $srcdir/st-fix-missing-glyphs.diff
+	local file
+	cd "${_pkgname}"
+	sed \
+		-e '/char font/s/= .*/= "Fixed:pixelsize=13:style=SemiCondensed";/' \
+		-e '/char worddelimiters/s/= .*/= " '"'"'`\\\"()[]{}<>|";/' \
+		-e '/int defaultcs/s/= .*/= 1;/' \
+		-i config.def.h
+	sed \
+		-e 's/CPPFLAGS =/CPPFLAGS +=/g' \
+		-e 's/CFLAGS =/CFLAGS +=/g' \
+		-e 's/LDFLAGS =/LDFLAGS +=/g' \
+		-e 's/_BSD_SOURCE/_DEFAULT_SOURCE/' \
+		-i config.mk
+	sed '/@tic/d' -i Makefile
+	for file in "${source[@]}"; do
+		if [[ "$file" == "config.h" ]]; then
+			# add config.h if present in source array
+			# Note: this supersedes the above sed to config.def.h
+			cp "$srcdir/$file" .
+		elif [[ "$file" == *.diff || "$file" == *.patch ]]; then
+			# add all patches present in source array
+			patch -Np1 <"$srcdir/$(basename ${file})"
+		fi
+	done
 }
 
 build() {
-  cd $srcdir/$pkgname-$pkgver
-  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+	cd "${_pkgname}"
+	make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
 }
 
 package() {
-  cd $srcdir/$pkgname-$pkgver
-  make PREFIX=/usr DESTDIR="$pkgdir" TERMINFO="$pkgdir/usr/share/terminfo" install
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm644 README "$pkgdir/usr/share/doc/$pkgname/README"
-  install -Dm644 $srcdir/st.desktop "$pkgdir/usr/share/applications/st.desktop"
+	cd "${_pkgname}"
+	make PREFIX=/usr DESTDIR="${pkgdir}" install
+	install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+	install -Dm644 README "${pkgdir}/usr/share/doc/${pkgname}/README"
+	install -Dm644 "$srcdir/st.desktop" "${pkgdir}/usr/share/applications/st.desktop"
 }
