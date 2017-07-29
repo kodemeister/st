@@ -4,7 +4,7 @@
 
 pkgname=st-git
 _pkgname=st
-pkgver=0.7.30.g8dacdfb
+pkgver=0.7.31.g7f99032
 pkgrel=1
 pkgdesc='Simple virtual terminal emulator for X'
 url='http://st.suckless.org/'
@@ -15,8 +15,8 @@ depends=('libxft')
 makedepends=('ncurses' 'libxext' 'git')
 epoch=1
 # include config.h and any patches you want to have applied here
-source=('git://git.suckless.org/st' 'config.h' 'st-no-fallback-color.diff' 'st.desktop')
-sha1sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+source=('git://git.suckless.org/st' 'config.h' 'st.desktop')
+sha1sums=('SKIP' 'SKIP' 'SKIP')
 
 provides=("${_pkgname}")
 conflicts=("${_pkgname}")

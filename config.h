@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-char font[] = "FuraMono Nerd Font:size=14";
+char font[] = "Literation Mono Nerd Font:size=14";
 int borderpx = 0;
 
 /*
